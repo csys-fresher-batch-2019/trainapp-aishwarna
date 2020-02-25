@@ -10,15 +10,9 @@ public class TestAddPassenger {
 	private static final Logger LOGGER = Logger.getInstance();
 	public static void main(String[] args) {
 		Passenger p=new Passenger();
-		Scanner sc=new Scanner(System.in);
-	    LOGGER.debug("Enter passengerid");
-		p.setPassenger_id(sc.nextInt());
-		sc.nextLine();
+		Scanner sc=new Scanner(System.in);		
 		LOGGER.debug("Enter passenger name");
 		p.setPassenger_name(sc.nextLine());
-		sc.nextLine();
-		LOGGER.debug("Enter trainId");
-		p.setTrain_id(sc.nextInt());
 		sc.nextLine();
 		LOGGER.debug("Enter gender");
 		p.setGender(sc.nextLine());

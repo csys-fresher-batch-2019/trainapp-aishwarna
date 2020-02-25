@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BookingDetails implements Bookingdao {
@@ -19,6 +20,7 @@ public class BookingDetails implements Bookingdao {
 	private String birth_type;
 	private String status;
 	private int  passengerid;
+	private Date travel_date;
 
 	public int getTr_id() {
 		return tr_id;
@@ -31,9 +33,16 @@ public class BookingDetails implements Bookingdao {
 	public int getTrainid() {
 		return trainid;
 	}
-
 	public void setTrainid(int trainid) {
 		this.trainid = trainid;
+	}
+
+	public Date getTravel_date() {
+		return travel_date;
+	}
+
+	public void setTravel_date(Date travel_date) {
+		this.travel_date=travel_date;
 	}
 
 	public int getPn_id() {
@@ -87,6 +96,7 @@ public class BookingDetails implements Bookingdao {
 	public static Connection conMethod() throws Exception {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle");
+		//Connection con = DriverManager.getConnection("jdbc:oracle:thin:@13.235.147.120", "Aishwaryaa", "Aishwaryaa");
 		LOGGER.debug("connected");
 		return con;
 
@@ -94,8 +104,9 @@ public class BookingDetails implements Bookingdao {
 
 	@Override
 	public String toString() {
-		return "BookingDetails [tr_id=" + tr_id + ", pn_id=" + pn_id + ", compartment_no=" + compartment_no
-				+ ", coach_type=" + coach_type + ", birth_type=" + birth_type + "]";
+		return "BookingDetails [tr_id=" + tr_id + ", trainid=" + trainid + ", pn_id=" + pn_id + ", compartment_no="
+				+ compartment_no + ", coach_type=" + coach_type + ", birth_type=" + birth_type + ", status=" + status
+				+ ", passengerid=" + passengerid + ", travel_date=" + travel_date + "]";
 	}
 
 	public List<BookingDetails>searchByPassengerid(int passengerid) {
@@ -140,12 +151,17 @@ public class BookingDetails implements Bookingdao {
 		}
 	}
 		public void AddBookingDetail(BookingDetails bd) {
-			String sql16 = "insert into booking_detail(tr_id,pn_id,compartment_no,coach_type,birth_type,payment_status)values(?,?,?,?,?,?)";
+			String sql16 = "insert into booking_detail(tr_id,pn_id,coach_type,birth_type,travel_date)values(?,?,?,?,?)";
 			try(Connection con = conMethod();
 			PreparedStatement pst = con.prepareStatement(sql16)) {
 				LOGGER.debug(sql16);
-				int rows=pst.executeUpdate(sql16);
-				LOGGER.debug(rows+"Rows updates");
+				pst.setInt(1, bd.getTr_id());
+				pst.setInt(2,bd.getPn_id());
+				pst.setString(3,bd.getCoach_type());
+				pst.setString(4,bd.getBirth_type());
+				pst.setDate(5,(java.sql.Date)bd.getTravel_date());
+				int rows=pst.executeUpdate();
+				LOGGER.debug(rows+"Rows updated");
 			}
 			catch(Exception e)
 			{

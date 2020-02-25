@@ -23,7 +23,7 @@ public void addpassenger(Passenger p);
  
  
  //SqlQuery("select passenger_id,password from passenger where passenger_id=?")
- public void login(int pId,int pass) ;
+ public String login(long Contact,int pass);
 
  
 

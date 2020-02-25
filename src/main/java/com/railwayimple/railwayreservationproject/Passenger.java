@@ -1,4 +1,4 @@
-package com.railwayimple.railwayreservationproject;
+  package com.railwayimple.railwayreservationproject;
 	import java.sql.Connection;
 	import java.sql.DriverManager;
 	import java.sql.PreparedStatement;
@@ -7,7 +7,11 @@ package com.railwayimple.railwayreservationproject;
 	import java.time.LocalDate;
 	import java.time.LocalDateTime;
      import java.util.List;
-     import java.util.ArrayList;
+
+import oracle.sql.DATE;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 	public class Passenger implements passengerdao {
 		private static final Logger LOGGER = Logger.getInstance();
@@ -20,7 +24,7 @@ package com.railwayimple.railwayreservationproject;
 		private int password;
 		private String status;
 		private String train_name;
-	
+
 		public int getPassenger_id() {
 			return passenger_id;
 		}
@@ -101,6 +105,7 @@ package com.railwayimple.railwayreservationproject;
 		{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","oracle");
+			//Connection con = DriverManager.getConnection("jdbc:oracle:thin:@13.235.147.120", "Aishwaryaa", "Aishwaryaa");
 			LOGGER.debug("connected");
 			return con;
 			
@@ -144,17 +149,16 @@ package com.railwayimple.railwayreservationproject;
 		
 			public void addpassenger(Passenger p) {
 				// TODO Auto-generated method stub
-				String sql8="insert into passenger(passenger_id,passenger_name,train_id,gender,contact_number,adhar_number,password)values(?,?,?,?,?,?,?)";
+				String sql8="insert into passenger(passenger_id,passenger_name,gender,contact_number,adhar_number,password)values(passenger_id_seq.nextval,?,?,?,?,?)";
 				try(Connection con=conMethod();
 					PreparedStatement pst =con.prepareStatement(sql8)){
 					LOGGER.debug(sql8);
-					pst.setInt(1, p.getPassenger_id());
-					pst.setString(2,p.getPassenger_name());
-					pst.setInt(3, p.getTrain_id());
-					pst.setString(4,p.getGender());
-					pst.setLong(5,p.getContact_number());
-					pst.setLong(6, p.getAdhar_number());
-					pst.setInt(7, p.getPassword());
+					
+					pst.setString(1,p.getPassenger_name());
+					pst.setString(2,p.getGender());
+					pst.setLong(3,p.getContact_number());
+					pst.setLong(4, p.getAdhar_number());
+					pst.setInt(5, p.getPassword());
 					int rows=pst.executeUpdate();
 					LOGGER.debug(rows+"Rows updated");
 		 		}
@@ -164,41 +168,7 @@ package com.railwayimple.railwayreservationproject;
 				}
 				
 			}
-			public void login(int pId,int pass) {
-		String sql="select passenger_id,password from passenger where passenger_id=?";
-		LOGGER.debug(sql);
-		try(Connection con=conMethod();
-				PreparedStatement pst=con.prepareStatement(sql))
-				{
-			pst.setInt(1,pId);
-			ResultSet rs=pst.executeQuery();
-			//LOGGER.debug(sql);
- 		
-					 if(rs.next())
-				        {
-						 int passengerId=rs.getInt("passenger_id");
-				        	//LOGGER.debug(passengerId);
-				        	int Password=rs.getInt("password");
-				        	//LOGGER.debug(Password);
-				        	if(passengerId==pId && Password==pass)
-				        	{
-				        		LOGGER.debug("Logged in successfully");
-				        	}
-				        	 else 
-							 {
-								 LOGGER.debug("Login failed");
-							 }
-				        	
-				        }
-					
-		 
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-	}
+			
 			public String toString1() {
 				return "Passenger [ passenger_name=" + passenger_name+" ,status=" + status + "]";
 			}
@@ -231,7 +201,7 @@ package com.railwayimple.railwayreservationproject;
 			}
 			
 			public List<Passenger> viewFemalePassengers() {
-				String sql13="select p.passenger_name,t.train_name from passenger p ,trains t where p.train_id=t.train_id and p.gender='female'"; 	
+				String sql13="select p.passenger_name,t.train_name from passenger p ,trains t where p.train_id=t.trainid and p.gender='female'"; 	
 				List<Passenger>list=new ArrayList<Passenger>();
 				try(Connection con=conMethod();
 					Statement stmt=con.createStatement();
@@ -274,14 +244,39 @@ package com.railwayimple.railwayreservationproject;
 				}
 				return list;
 			}
-			
-			
-			
+			public String login(long Contact,int pass) {
+				String sql="select contact_number,password from passenger where contact_number="+Contact+" and password="+pass;
+				LOGGER.debug(sql);
+				try(Connection con=conMethod();
+						Statement stmt=con.createStatement();
+						ResultSet rs=stmt.executeQuery(sql))
+						{
+					String st=null;
+					 if(rs.next()) {
+						 
+								 long contact=rs.getLong("contact_number");
+						        	
+						        int Password=rs.getInt("password");
+						        	if(Contact==contact && pass==Password)
+						        	{
+						        		st="success";
+						        		LOGGER.debug("Logged in successfully");
+						        		
+						        	}
+						        	 
+						        	
+						        }else 
+								 {
+					        		 st="failure";
+									 LOGGER.debug("Login failed");
+								 }return st;
+						}catch(Exception e)	
+				{
+				LOGGER.debug(e);
+				}
+				return null;
+			}	
 			}
-				
-		
-			
-		
 			
 		
 			

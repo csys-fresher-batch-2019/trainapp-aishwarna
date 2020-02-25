@@ -29,6 +29,7 @@ public class Admin implements AdminDAO {
 	{
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","oracle");
+		//Connection con = DriverManager.getConnection("jdbc:oracle:thin:@13.235.147.120", "Aishwaryaa", "Aishwaryaa"); 
 		LOGGER.debug("connected");
 		return con;
 		
@@ -38,7 +39,7 @@ public class Admin implements AdminDAO {
 		return "Admin [user_name=" + user_name + ", password=" + password + "]";
 	}
 	public String Userlogin(String username,int pass) {
-		String sql="select user_name,password from Admin";
+		String sql="select user_name,password from Admin where user_name='"+username+"' and password="+pass;
 		try(Connection con=conMethod();
 				Statement stmt=con.createStatement();
 				ResultSet rs=stmt.executeQuery(sql)) {
@@ -52,15 +53,14 @@ public class Admin implements AdminDAO {
 		        	if(userName.equals(username) && password==pass)
 		        	{
 		        		LOGGER.debug("Logged in successfully");
-		        		return str;
-		        	}else
-		        	{
-		        		str="failure";
-		        		LOGGER.debug("Login failed");
-		        		return str;
 		        	}
 		        	
-		        }
+		        }else
+	        	{
+	        		str="failure";
+	        		LOGGER.debug("Login failed");
+	        		
+	        	}return str;
 			
 		}
 		catch (Exception e) {

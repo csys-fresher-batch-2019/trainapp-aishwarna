@@ -12,6 +12,8 @@ public interface traindao  {
 	public void insertTrains(Trains t);
 	
 	//@SqlQuery("select count(journey_starts) from trains where journey_starts='chennai");
-	public void displayCountOfTrains();
+	public int  displayCountOfTrains();
+	
+	public List<Trains>  displayTrainDetails(String trainname);
 	
 }

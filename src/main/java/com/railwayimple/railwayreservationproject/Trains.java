@@ -87,6 +87,7 @@ public class Trains implements traindao {
 	public static Connection conMethod() throws Exception {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle");
+		//Connection con = DriverManager.getConnection("jdbc:oracle:thin:@13.235.147.120", "Aishwaryaa", "Aishwaryaa");
 		LOGGER.debug("connected");
 		return con;
 
@@ -102,7 +103,7 @@ public class Trains implements traindao {
 	// method definition for displaying train name ,source,des,arival,depature,birth
 	// type
 	public List<Trains> searchByTrainName1(String trainname) {
-		String sql = "select train_name,journey_starts,journey_ends from trains order by train_name";
+		String sql = "select train_name,journey_starts,journey_ends from trains where train_name='"+trainname+"'";
 		List<Trains> list = new ArrayList<Trains>();
 		try (Connection con = conMethod();
 				Statement stmt = con.createStatement();
@@ -130,17 +131,23 @@ public class Trains implements traindao {
 
 	public List<Trains> displayTrainNames() {
 		// TODO Auto-generated method stub
-		String sql1 = "select train_name from trains where train_name like 'k%'";
+		String sql1 = "select train_id,train_name,journey_starts,journey_ends from trains";
 		List<Trains> list = new ArrayList<Trains>();
 		try (Connection con = conMethod();
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(sql1)) {
 			LOGGER.debug(sql1);
 			while (rs.next()) {
+				int id = rs.getInt("train_id");
 				String trainName = rs.getString("train_name");
+				String start = rs.getString("journey_starts");
+				String end = rs.getString("journey_ends");
 				LOGGER.debug(trainName);
 				Trains t = new Trains();
+				t.setTrainid(id);
 				t.setTrainname(trainName);
+				t.setJourneystarts(start);
+				t.setJourneyends(end);
 				list.add(t);
 			}
 		} catch (Exception e) {
@@ -171,25 +178,63 @@ public class Trains implements traindao {
 		}
 
 	}
-
-	public void displayCountOfTrains() {
-		// List<Trains> list = new ArrayList<Trains>();
-		String sql10 = "select count(journey_starts) from trains where journey_starts='chennai'";
-		try (Connection con = conMethod();
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(sql10)) {
-			LOGGER.debug(sql10);
+	
+	public List<Trains>  displayTrainDetails(String trainname) {
+		String sql="select train_id,journey_starts,journey_ends,arrival_time,depature_time from trains where train_name=?";
+		List<Trains> list = new ArrayList<>();
+		try (Connection con = conMethod(); PreparedStatement pst = con.prepareStatement(sql)) {
+			LOGGER.debug(sql);
+			pst.setString(1, trainname);
+			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				int journeystartcount = rs.getInt("count(journey_starts)");
-				LOGGER.debug(journeystartcount);
-				// Trains t=new Trains(journeystartcount);
-				// t.setJourneyStartCount(journeystartcount);
-				// list.add(t);
-
+				int id = rs.getInt("train_id");
+				String start = rs.getString("journey_starts");
+				String end = rs.getString("journey_ends");
+				LocalDateTime arrival=rs.getTimestamp("arrival_time").toLocalDateTime();
+				LocalDateTime depature=rs.getTimestamp("depature_time").toLocalDateTime();
+				Trains t = new Trains();
+				t.setTrainid(id);
+				t.setJourneystarts(start);
+				t.setJourneyends(end);
+				t.setArrivaltime(arrival);
+				t.setDepaturetime(depature);
+				list.add(t);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return list;
+	}
+
+	public int  displayCountOfTrains() {
+		// List<Trains> list = new ArrayList<Trains>();
+		String sql10 = "select count(journey_starts)as ct from trains where journey_starts=?";
+		try (Connection con = conMethod();
+				PreparedStatement pst = con.prepareStatement(sql10)){
+				pst.setString(1, journeystarts);
+				ResultSet rs = pst.executeQuery();
+			if(rs.next()) {
+				int journeystartcount = rs.getInt("ct");
+				LOGGER.debug(journeystartcount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return 0;
 
 	}
+	public void deletetrain(String tname) {
+		String sql8 = "delete from trains where train_name='"+tname+"'";
+		try(Connection con = conMethod();
+			Statement stmt = con.createStatement()) {
+			LOGGER.debug(sql8);
+			int rows = stmt.executeUpdate(sql8);
+			LOGGER.debug(rows + "deleted");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}			
+		
+	}
+	
 }

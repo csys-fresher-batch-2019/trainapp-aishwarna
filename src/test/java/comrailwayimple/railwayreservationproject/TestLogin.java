@@ -12,11 +12,11 @@ public class TestLogin {
 		Passenger p=new Passenger();
 		@SuppressWarnings("resource")
 		Scanner sc=new Scanner(System.in);
-	    LOGGER.debug("Enter passengerid");
-	    int pId=sc.nextInt();
+	    LOGGER.debug("Enter contact_number");
+	    long Contact=sc.nextLong();
 		LOGGER.debug("Enter password");
 		int pass=sc.nextInt();
-		p.login(pId,pass);
+		p.login(Contact,pass);
 		
 	}
 
