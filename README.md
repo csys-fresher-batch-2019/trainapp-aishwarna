@@ -17,8 +17,8 @@ The user must enter valid  username and password to login.
 ### usecase 2.2:Invalid Username or password:
 If the user entered username or password is incorrect, then it displays the message "Invalid UserName or Password" and allows the user to reenter the username and password .
 
-# User Story 3:AdminLogin:
-Admin will have seperate  username and pasword. If it is valid ,it allows him to view all train details, booking details of user and he can also able to delete trains ,if needed.
+# User Story 3:Admin Login:
+Admin will have seperate  username and password. If it is valid ,it allows him to view all train details, booking details of user and he can also able to delete trains ,if needed.
 
 # User Story 4: Viewing train details:
 
