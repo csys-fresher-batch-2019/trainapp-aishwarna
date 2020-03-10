@@ -42,7 +42,7 @@ By doing so,it will direct them to the booking page and need to give the require
  If the booking failed due to user network issues , the admin will intimate the user to ensure proper network connection.    
   
 ### usecase 5.4: UnSuccessfull Booking due to server side:
-If the booking failed due to server issues, the user must send an email to admin to recover the error.
+If the booking failed due to server issues(database), the user must send an email to admin to recover the error.
 
 
 # User Story 6: Admin features
